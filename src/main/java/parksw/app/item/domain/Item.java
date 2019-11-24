@@ -2,6 +2,7 @@ package parksw.app.item.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import parksw.app.item.exception.NotEnoughStockException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,4 +30,16 @@ public abstract class Item {
 
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<>();
+
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    public void removeStock(int quantity) {
+        int restStock = this.stockQuantity - quantity;
+        if (0 > restStock) {
+            throw new NotEnoughStockException("재고량이 충분하지 않습니다.");
+        }
+        this.stockQuantity = restStock;
+    }
 }
