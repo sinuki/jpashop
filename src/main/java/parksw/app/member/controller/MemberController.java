@@ -29,7 +29,7 @@ public class MemberController {
         return "members/createMemberForm";
     }
 
-    @PostMapping("/members/new")
+    @PostMapping("members/new")
     public String create(@Valid MemberForm form, BindingResult bind) {
         if (bind.hasErrors())   return "members/createMemberForm";
 
@@ -39,5 +39,11 @@ public class MemberController {
 
         memberService.join(member);
         return "redirect:/";
+    }
+
+    @GetMapping("members")
+    public String list(Model model) {
+        model.addAttribute("members", memberService.findAll());
+        return "members/memberList";
     }
 }
