@@ -2,6 +2,7 @@ package parksw.app.delivery.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import parksw.app.member.domain.Address;
 import parksw.app.order.domain.Order;
 
@@ -17,6 +18,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
+@ToString(exclude = "order")
 public class Delivery {
 
     @Id

@@ -9,7 +9,8 @@ import parksw.app.member.service.MemberService;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * MemberApiController
@@ -42,7 +43,7 @@ public class MemberApiController {
     @GetMapping("api/v2/members")
     public Result<List<MemberDTO>> memberV2() {
         List<Member> members = memberService.findAll();
-        List<MemberDTO> memDto = members.stream().map(m -> new MemberDTO(m.getName())).collect(Collectors.toList());
+        List<MemberDTO> memDto = members.stream().map(m -> new MemberDTO(m.getName())).collect(toList());
         return new Result<>(memDto);
     }
 

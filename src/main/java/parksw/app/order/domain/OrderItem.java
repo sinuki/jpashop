@@ -1,9 +1,6 @@
 package parksw.app.order.domain;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import parksw.app.item.domain.Item;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(exclude = "order")
 public class OrderItem {
 
     @Id
