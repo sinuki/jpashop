@@ -22,7 +22,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = "member")
+@ToString
 public class Order {
 
     @Id

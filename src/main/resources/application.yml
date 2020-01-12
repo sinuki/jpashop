@@ -11,6 +11,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+        # xToMany관계에서 Many에 해당하는 엔티티를 지연로딩할 때 하나하나 가져오지 않고 지정 사이즈만큼 한 번에 가져오기 위한 설정(전역 설정이고 개별 설정은 @BatchSize를 이용해 지정한다)
+        default_batch_fetch_size: 100
 
 #logging:
 #  level:
