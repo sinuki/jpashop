@@ -35,6 +35,7 @@ public class OrderApiController {
 
     @GetMapping("api/v1/orders")
     public List<Order> ordersV1(OrderSearch orderSearch) {
+        // Entity를 조회해서 그대로 반환
         List<Order> all = orderRepository.findAll(orderSearch);
         for (Order order : all) {
             order.getMember().getName();
@@ -47,12 +48,14 @@ public class OrderApiController {
 
     @GetMapping("api/v2/orders")
     public List<OrderDto> ordersV2(OrderSearch orderSearch) {
+        // 엔티티 조회후 DTO로 변환후 반환
         List<Order> orders = orderRepository.findAll(orderSearch);
         return orders.stream().map(OrderDto::new).collect(toList());
     }
 
     @GetMapping("api/v3/orders")
     public List<OrderDto> ordersV3() {
+        // 페치 조인으로 쿼리 수 최적화
         List<Order> orders = orderRepository.findAllWithItem();
         return orders.stream().map(OrderDto::new).collect(toList());
     }
@@ -60,25 +63,34 @@ public class OrderApiController {
     @GetMapping("api/v3.1/orders")
     public List<OrderDto> ordersV3_1(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                      @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        // 컬렉션은 페치조인 불가능
         // xToOne관계는 결과 로우수를 뻥튀기시키지 않으므로 페치 조인해서 가져와도 상관없음.
+        // 컬렉션은 페치 조인 대신에 지연로딩 유지하고 hibernate.default_batch_fetch_size로 최적화
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
         return orders.stream().map(OrderDto::new).collect(toList());
     }
 
+    // 1. DTO를 직접 조회하는 방식은 성능을 최적화하거나 성능 최적화 방식을 변경할 때 많은 코드를 변경해야 한다.
+    // 2. 캐시는 가급적이면 엔티티를 캐시하지 말고 dto를 캐싱할 것.
+    //    왜냐하면 엔티티 매니저가 상태를 관리하고 있는데 엔티티를 캐시하여 상태 변경이 제때 일어나지 않을 경우 매우 곤란하기 떄문.
+    // 3. 2차 캐시 적용 예제가 있지만 상태관리에 있어서 매우 까다롭기 때문에 권장하지 않는다.
     @GetMapping("api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
+        // dto 직접 조회
         // n + 1문제가 발생
         return orderQueryRepository.findOrderQueryDtos();
     }
 
     @GetMapping("api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
+        // dto 직접 조회
         // query 2번으로 결과 조회 가능
         return orderQueryRepository.findAllByDtoOptimization();
     }
 
     @GetMapping("api/v6/orders")
     public List<OrderQueryDto> ordersV6() {
+        // dto 직접 조회
         // query 1번으로 결과 조회 가능, 그러나 페이징이 불가능하고 애플리케이션 레벨에서 작업이 많음
         List<OrderFlatDto> result = orderQueryRepository.findAllByDtoFlat();
         return result.stream()
